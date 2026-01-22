@@ -1,0 +1,56 @@
+<h1>📋 Table Order</h1>
+
+<label>Table number:</label>
+<input id="table" type="number" min="1" /><br /><br />
+
+<button onclick="addItem('Burger')">🍔 Burger</button>
+<button onclick="addItem('Fries')">🍟 Fries</button>
+<button onclick="addItem('Drink')">🥤 Drink</button>
+<button onclick="addItem('hicken Nuggets')">🥤 Drink</button>
+
+<p><b>Items:</b> <span id="items"></span></p>
+
+<label>Comment for kitchen:</label><br />
+<textarea
+  id="comment"
+  rows="3"
+  cols="30"
+  placeholder="e.g. no onions, allergy"
+></textarea>
+<br /><br />
+
+<button onclick="sendOrder()">📤 Send Order</button>
+
+<script>
+  let items = [];
+
+  function addItem(item) {
+    items.push(item);
+    document.getElementById("items").innerText = items.join(", ");
+  }
+
+  function sendOrder() {
+    const table = document.getElementById("table").value;
+    const comment = document.getElementById("comment").value; // <- grab comment
+
+    if (!table || items.length === 0) {
+      alert("Enter table number and add items!");
+      return;
+    }
+
+    fetch("/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        table: table,
+        items: items,
+        comment: comment, // <- send it to server
+      }),
+    });
+
+    // reset inputs
+    items = [];
+    document.getElementById("items").innerText = "";
+    document.getElementById("comment").value = "";
+  }
+</script>
